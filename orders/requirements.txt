@@ -9,4 +9,4 @@ ujson~=5.9.0
 pyyaml~=6.0.0
 drf_spectacular
 drf_spectacular_sidecar
-python-dotenv>=1.0.0
+psycopg2-binary==2.9.6

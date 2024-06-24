@@ -79,7 +79,7 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': order_db,
+        'NAME': 'orders',
         'HOST': '127.0.0.1',
         'PORT': '5432',
         'USER': 'postgres',
