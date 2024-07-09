@@ -10,3 +10,8 @@ pyyaml~=6.0.0
 drf_spectacular
 drf_spectacular_sidecar
 psycopg2-binary==2.9.6
+redis~=4.4.0
+celery~=5.2.7
+pytest~=7.2.0
+pytest-django~=4.5.2
+django-silk~=5.1.0
