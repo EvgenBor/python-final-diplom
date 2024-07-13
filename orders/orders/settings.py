@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'backend',
     'drf_spectacular',
     'drf_spectacular_sidecar',
+    'social_auth',
 ]
 
 SPECTACULAR_SETTINGS = {
@@ -66,6 +67,38 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.contrib.vk.VKOAuth2Backend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.contrib.github.GithubBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+GOOGLE_OAUTH2_CLIENT_ID = 'sixth-hawk-429317-e4.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET = 'p0dJSDjs-dAJsdSAdaSDadasdrt'
+
+GITHUB_APP_ID = 'Ov23liwjOwh1JtY5ckzz'
+GITHUB_API_SECRET = 'a44d2d5f139326186b102b9421bf3e5c3b581bc1'
+
+VK_APP_ID = '51991135'
+VKONTAKTE_APP_ID = VK_APP_ID
+VK_API_SECRET = 'Q0owlQESOXRYd2lcgnLa'
+VKONTAKTE_APP_SECRET = VK_API_SECRET
+
+SOCIAL_AUTH_CREATE_USERS = True
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_auth.backends.pipeline.social.social_auth_user',
+    'social_auth.backends.pipeline.associate.associate_by_email',
+    'social_auth.backends.pipeline.user.get_username',
+    'social_auth.backends.pipeline.user.create_user',
+    'social_auth.backends.pipeline.social.associate_user',
+    'social_auth.backends.pipeline.social.load_extra_data',
+    'social_auth.backends.pipeline.user.update_user_details'
+)
+
+
 ROOT_URLCONF = 'orders.urls'
 
 TEMPLATES = [
@@ -84,6 +117,13 @@ TEMPLATES = [
         },
     },
 ]
+
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    'social_auth.context_processors.social_auth_by_name_backends',
+)
 
 WSGI_APPLICATION = 'orders.wsgi.application'
 
