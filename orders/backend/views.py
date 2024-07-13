@@ -14,19 +14,21 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
+from drf_spectacular.utils import extend_schema
 
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, Order, OrderItem, \
     Contact, ConfirmEmailToken
 from backend.serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductInfoSerializer, \
-    OrderItemSerializer, OrderSerializer, ContactSerializer
+    OrderItemSerializer, OrderSerializer, ContactSerializer, UserRegisterSerializer, UserRegisterConfirmSerializer, UserLoginSerializer, ParnerUpdateSerializer
 from backend.signals import new_user_registered, new_order
 
 
+@extend_schema(request=UserRegisterSerializer)
 class RegisterAccount(APIView):
     """
     Для регистрации покупателей
     """
-
+    throttle_classes = [AnonRateThrottle]
     # Регистрация методом POST
 
     def post(self, request, *args, **kwargs):
@@ -68,11 +70,12 @@ class RegisterAccount(APIView):
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
 
+@extend_schema(request=UserRegisterConfirmSerializer)
 class ConfirmAccount(APIView):
     """
     Класс для подтверждения почтового адреса
     """
-
+    throttle_classes = [AnonRateThrottle]
     # Регистрация методом POST
     def post(self, request, *args, **kwargs):
         """
@@ -100,6 +103,7 @@ class ConfirmAccount(APIView):
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
 
+@extend_schema(request=UserSerializer)
 class AccountDetails(APIView):
     """
     A class for managing user account details.
@@ -111,7 +115,7 @@ class AccountDetails(APIView):
     Attributes:
     - None
     """
-
+    throttle_classes = [AnonRateThrottle]
     # получить данные
     def get(self, request: Request, *args, **kwargs):
         """
@@ -167,11 +171,12 @@ class AccountDetails(APIView):
             return JsonResponse({'Status': False, 'Errors': user_serializer.errors})
 
 
+@extend_schema(request=UserLoginSerializer)
 class LoginAccount(APIView):
     """
     Класс для авторизации пользователей
     """
-
+    throttle_classes = [AnonRateThrottle]
     # Авторизация методом POST
     def post(self, request, *args, **kwargs):
         """
@@ -255,6 +260,7 @@ class ProductInfoView(APIView):
         return Response(serializer.data)
 
 
+@extend_schema(request=OrderSerializer, responses=OrderSerializer)
 class BasketView(APIView):
     """
     A class for managing the user's shopping basket.
@@ -268,7 +274,7 @@ class BasketView(APIView):
     Attributes:
     - None
     """
-
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     # получить корзину
     def get(self, request, *args, **kwargs):
         """
@@ -394,6 +400,7 @@ class BasketView(APIView):
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
 
+@extend_schema(request=ParnerUpdateSerializer)
 class PartnerUpdate(APIView):
     """
     A class for updating partner information.
@@ -404,7 +411,7 @@ class PartnerUpdate(APIView):
     Attributes:
     - None
     """
-
+    throttle_classes = [AnonRateThrottle]
     def post(self, request, *args, **kwargs):
         """
                 Update the partner price list information.
@@ -460,6 +467,7 @@ class PartnerUpdate(APIView):
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
 
+@extend_schema(request=ShopSerializer, responses=ShopSerializer)
 class PartnerState(APIView):
     """
        A class for managing partner state.
@@ -470,6 +478,7 @@ class PartnerState(APIView):
        Attributes:
        - None
        """
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     # получить текущий статус
     def get(self, request, *args, **kwargs):
         """
@@ -518,6 +527,7 @@ class PartnerState(APIView):
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
 
+@extend_schema(request=OrderSerializer, responses=OrderSerializer)
 class PartnerOrders(APIView):
     """
     Класс для получения заказов поставщиками
@@ -527,7 +537,7 @@ class PartnerOrders(APIView):
     Attributes:
     - None
     """
-
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     def get(self, request, *args, **kwargs):
         """
                Retrieve the orders associated with the authenticated partner.
@@ -554,6 +564,7 @@ class PartnerOrders(APIView):
         return Response(serializer.data)
 
 
+@extend_schema(request=ContactSerializer, responses=ContactSerializer)
 class ContactView(APIView):
     """
        A class for managing contact information.
@@ -567,7 +578,7 @@ class ContactView(APIView):
        Attributes:
        - None
        """
-
+    throttle_classes = [UserRateThrottle]
     # получить мои контакты
     def get(self, request, *args, **kwargs):
         """
@@ -671,6 +682,7 @@ class ContactView(APIView):
         return JsonResponse({'Status': False, 'Errors': 'Не указаны все необходимые аргументы'})
 
 
+@extend_schema(request=OrderSerializer, responses=OrderSerializer)
 class OrderView(APIView):
     """
     Класс для получения и размешения заказов пользователями
@@ -683,7 +695,7 @@ class OrderView(APIView):
     Attributes:
     - None
     """
-
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     # получить мои заказы
     def get(self, request, *args, **kwargs):
         """
